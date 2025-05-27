@@ -6,6 +6,7 @@ import { SearchProvider } from '@/components/search-provider';
 import { Header } from '@/components/header';
 import { Toaster } from '@/components/ui/toaster';
 import { ReactQueryProvider } from '@/components/react-query-provider';
+import { GameCarousel } from '@/components/game-carousel';
 
 const inter = Inter({ subsets: ['latin'] });
 

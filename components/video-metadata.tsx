@@ -1,16 +1,18 @@
-'use client';
-
 import { useMemo } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { getPlayerAvatar, getTeamColor } from '@/lib/utils';
 import {
 	MediaPlaybackFieldsFragment,
 	PlayerInfoFieldsFragment,
 } from '@/gql/generated';
-import { Bases } from './icons/bases';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { VisuallyHidden } from '@/components/ui/visually-hidden';
+import { Separator } from '@/components/ui/separator';
+
+import { Bases } from '@/components/icons/bases';
+import { TeamLogo } from '@/components/team-logo';
+
+import { getPlayerAvatar } from '@/lib/utils';
 
 interface VideoMetadataProps {
 	mediaPlayback: MediaPlaybackFieldsFragment;
@@ -241,25 +243,13 @@ interface TeamDisplayProps {
 }
 
 function TeamDisplay({ name, code, isActive }: TeamDisplayProps) {
-	const teamColor = getTeamColor(code);
-
 	return (
 		<div
 			className={`p-2 flex rounded border flex-col items-center justify-center gap-1 ${
 				isActive ? 'bg-muted' : ''
 			}`}
 		>
-			<Avatar className="w-8 h-8 rounded-none">
-				<AvatarImage src={`/logos/${code.toLowerCase()}.svg`} />
-				<AvatarFallback>
-					<div
-						className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm"
-						style={{ backgroundColor: teamColor }}
-					>
-						{code}
-					</div>
-				</AvatarFallback>
-			</Avatar>
+			<TeamLogo code={code} />
 			<span className="text-xs text-center font-medium line-clamp-1">{name}</span>
 		</div>
 	);

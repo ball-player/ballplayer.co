@@ -104,3 +104,12 @@ export function hasPlayback(video: MediaPlaybackFieldsFragment): boolean {
 
 	return false;
 }
+
+export function formatTime(dateString: string): string {
+	try {
+		const date = new Date(dateString);
+		return format(date, 'h:mm a');
+	} catch (error) {
+		return dateString;
+	}
+}

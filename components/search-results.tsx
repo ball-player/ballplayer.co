@@ -32,6 +32,9 @@ export function SearchResults() {
 	const { data, isLoading, error, fetchNextPage, isFetchingNextPage, hasNextPage } =
 		useInfiniteNewSearchQueryQuery(
 			{
+				endpoint: process.env.NEXT_PUBLIC_MLB_API_URL!,
+			},
+			{
 				query: searchTerm || 'home runs and web gems',
 				...DEFAULT_QUERY_PARAMS,
 			},
@@ -57,12 +60,7 @@ export function SearchResults() {
 	}, [inView, fetchNextPage]);
 
 	if (isLoading) {
-		return (
-			<div className="flex flex-col items-center justify-center py-12">
-				<Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-				<p className="text-muted-foreground">Loading videos...</p>
-			</div>
-		);
+		return <VideoGrid.Loading />;
 	}
 
 	if (error) {
@@ -89,6 +87,7 @@ export function SearchResults() {
 	return videos.length > 0 ? (
 		<div className="flex flex-col gap-4">
 			<VideoGrid videos={videos} total={total} />
+			{isFetchingNextPage && <VideoGrid.Loading />}
 			{hasNextPage && (
 				<div className="flex justify-center mt-8">
 					<Button

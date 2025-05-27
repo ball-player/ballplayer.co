@@ -7,11 +7,11 @@ export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Mayb
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 
-function fetcher<TData, TVariables>(query: string, variables?: TVariables) {
+function fetcher<TData, TVariables>(endpoint: string, requestInit: RequestInit, query: string, variables?: TVariables) {
   return async (): Promise<TData> => {
-    const res = await fetch("https://fastball-gateway.mlb.com/graphql", {
-    method: "POST",
-    ...({"method":"POST","headers":{"accept":"*/*","accept-language":"en-US,en;q=0.9","content-type":"text/plain;charset=UTF-8"}}),
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      ...requestInit,
       body: JSON.stringify({ query, variables }),
     });
 
@@ -1319,6 +1319,7 @@ export const useNewSearchQueryQuery = <
       TData = NewSearchQueryQuery,
       TError = unknown
     >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
       variables: NewSearchQueryQueryVariables,
       options?: Omit<UseQueryOptions<NewSearchQueryQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<NewSearchQueryQuery, TError, TData>['queryKey'] }
     ) => {
@@ -1326,7 +1327,7 @@ export const useNewSearchQueryQuery = <
     return useQuery<NewSearchQueryQuery, TError, TData>(
       {
     queryKey: ['NewSearchQuery', variables],
-    queryFn: fetcher<NewSearchQueryQuery, NewSearchQueryQueryVariables>(NewSearchQueryDocument, variables),
+    queryFn: fetcher<NewSearchQueryQuery, NewSearchQueryQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, NewSearchQueryDocument, variables),
     ...options
   }
     )};
@@ -1335,6 +1336,7 @@ export const useInfiniteNewSearchQueryQuery = <
       TData = InfiniteData<NewSearchQueryQuery>,
       TError = unknown
     >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
       variables: NewSearchQueryQueryVariables,
       options: Omit<UseInfiniteQueryOptions<NewSearchQueryQuery, TError, TData>, 'queryKey'> & { queryKey?: UseInfiniteQueryOptions<NewSearchQueryQuery, TError, TData>['queryKey'] }
     ) => {
@@ -1344,7 +1346,7 @@ export const useInfiniteNewSearchQueryQuery = <
     const { queryKey: optionsQueryKey, ...restOptions } = options;
     return {
       queryKey: optionsQueryKey ?? ['NewSearchQuery.infinite', variables],
-      queryFn: (metaData) => fetcher<NewSearchQueryQuery, NewSearchQueryQueryVariables>(NewSearchQueryDocument, {...variables, ...(metaData.pageParam ?? {})})(),
+      queryFn: (metaData) => fetcher<NewSearchQueryQuery, NewSearchQueryQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, NewSearchQueryDocument, {...variables, ...(metaData.pageParam ?? {})})(),
       ...restOptions
     }
   })()
@@ -1374,6 +1376,7 @@ export const useClipQueryQuery = <
       TData = ClipQueryQuery,
       TError = unknown
     >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
       variables: ClipQueryQueryVariables,
       options?: Omit<UseQueryOptions<ClipQueryQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<ClipQueryQuery, TError, TData>['queryKey'] }
     ) => {
@@ -1381,7 +1384,7 @@ export const useClipQueryQuery = <
     return useQuery<ClipQueryQuery, TError, TData>(
       {
     queryKey: ['clipQuery', variables],
-    queryFn: fetcher<ClipQueryQuery, ClipQueryQueryVariables>(ClipQueryDocument, variables),
+    queryFn: fetcher<ClipQueryQuery, ClipQueryQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, ClipQueryDocument, variables),
     ...options
   }
     )};
@@ -1390,6 +1393,7 @@ export const useInfiniteClipQueryQuery = <
       TData = InfiniteData<ClipQueryQuery>,
       TError = unknown
     >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
       variables: ClipQueryQueryVariables,
       options: Omit<UseInfiniteQueryOptions<ClipQueryQuery, TError, TData>, 'queryKey'> & { queryKey?: UseInfiniteQueryOptions<ClipQueryQuery, TError, TData>['queryKey'] }
     ) => {
@@ -1399,7 +1403,7 @@ export const useInfiniteClipQueryQuery = <
     const { queryKey: optionsQueryKey, ...restOptions } = options;
     return {
       queryKey: optionsQueryKey ?? ['clipQuery.infinite', variables],
-      queryFn: (metaData) => fetcher<ClipQueryQuery, ClipQueryQueryVariables>(ClipQueryDocument, {...variables, ...(metaData.pageParam ?? {})})(),
+      queryFn: (metaData) => fetcher<ClipQueryQuery, ClipQueryQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, ClipQueryDocument, {...variables, ...(metaData.pageParam ?? {})})(),
       ...restOptions
     }
   })()

@@ -1,6 +1,6 @@
 'use client';
 
-import type { ClipDetails, MediaPlaybackFieldsFragment } from '@/gql/generated';
+import type { MediaPlaybackFieldsFragment } from '@/gql/generated';
 import { VideoCard } from '@/components/video-card';
 import { motion } from 'framer-motion';
 
@@ -9,7 +9,7 @@ interface VideoGridProps {
 	total: number;
 }
 
-export function VideoGrid({ videos, total }: VideoGridProps) {
+export function VideoGrid({ videos }: VideoGridProps) {
 	const container = {
 		hidden: { opacity: 0 },
 		show: {
@@ -22,15 +22,6 @@ export function VideoGrid({ videos, total }: VideoGridProps) {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex justify-between items-center">
-				<h2 className="text-2xl font-bold">
-					Search Results
-					<span className="text-muted-foreground ml-2 text-base font-normal">
-						({total} videos)
-					</span>
-				</h2>
-			</div>
-
 			<motion.div
 				className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
 				variants={container}
@@ -44,3 +35,22 @@ export function VideoGrid({ videos, total }: VideoGridProps) {
 		</div>
 	);
 }
+
+function Loading() {
+	return (
+		<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+			{Array.from({ length: 24 }).map((_, index) => (
+				<div key={index} className="border rounded-lg">
+					<div className="aspect-video bg-muted rounded-lg animate-pulse" />
+					<div className="p-4 text-left">
+						<div className="h-4 bg-muted rounded-full animate-pulse" />
+						<div className="h-4 w-1/2 bg-muted rounded-full animate-pulse mt-2" />
+						<div className="h-4 w-1/3 bg-muted rounded-full animate-pulse mt-4" />
+					</div>
+				</div>
+			))}
+		</div>
+	);
+}
+
+VideoGrid.Loading = Loading;
