@@ -82,7 +82,9 @@ function Keywords({
 		setIsExpandedKeywords((prev) => !prev);
 	}, []);
 
-	const keywords = keywordsDisplay?.filter((keyword) => keyword !== null);
+	const keywords = keywordsDisplay?.filter(
+		(keyword): keyword is KeywordsDisplayFieldsFragment => keyword !== null
+	);
 	const firstThreeKeywords = keywords?.slice(0, 3);
 
 	return (
