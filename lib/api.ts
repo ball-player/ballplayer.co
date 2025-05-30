@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { add, sub, format } from 'date-fns';
 import {
 	ClipQueryDocument,
 	ContentPreference,
@@ -70,21 +70,22 @@ export const getSearch = async (
 };
 
 export const getGames = async (date: Date): Promise<GameApiResponse> => {
+	const startDate = format(date, 'yyyy-MM-dd');
+	const endDate = format(add(date, { days: 1 }), 'yyyy-MM-dd');
+
 	const variables = {
-		date: format(date, 'yyyy-MM-dd'),
-		sportId: '1,51',
-		gameTypes: 'E,S,R,A,F,D,L,W',
+		startDate,
+		endDate,
+		sportId: '1',
 		hydrate:
-			'team(leaders(showOnPreview(leaderCategories=[homeRuns,runsBattedIn,battingAverage],statGroup=[pitching,hitting]))),linescore(matchup,runners),flags,liveLookin,review,broadcasts(all),decisions,person,probablePitcher,stats,homeRuns,previousPlay,game(content(media(featured,epg),summary),tickets),seriesStatus(useOverride=true)',
-		useLatestGames: 'false',
-		scheduleTypes: 'events,games',
+			'team,linescore,xrefId,flags,review,broadcasts(all),game(content(media(epg),summary),tickets),seriesStatus(useOverride=true),statusFlags,story',
 		language: 'en',
-		leagueIds: '103,104,420',
+		sortBy: 'gameDate,gameStatus',
 	};
 
 	const params = new URLSearchParams(variables);
 	const data = await fetch(
-		`${process.env.NEXT_PUBLIC_MLB_API_URL}/schedule?${params.toString()}`,
+		`${process.env.NEXT_PUBLIC_STATSAPI_URL}/schedule?${params.toString()}`,
 		{
 			method: 'GET',
 			cache: 'no-store',

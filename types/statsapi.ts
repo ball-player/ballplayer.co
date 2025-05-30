@@ -19,6 +19,8 @@ export interface Game {
 	content: GameContent;
 	decisions: Decisions;
 	tickets: Ticket[];
+	flags: Flags;
+	statusFlags: StatusFlags;
 }
 
 export interface GameStatus {
@@ -285,15 +287,27 @@ export interface ScoreDetails {
 export interface Broadcast {
 	name: string;
 	type: string;
+	callSign: string;
+	broadcastDate: string;
 	language: string;
 	isNational: boolean;
+	freeGame: boolean;
+	freeGameStatus: boolean;
+	gameDateBroadcastGuid: string;
+	homeAway: 'home' | 'away';
 	availability: {
 		availabilityText: string;
+		availabilityCode: string;
+		availabilityId: number;
 	};
 	mediaState: {
 		mediaStateText: string;
+		mediaStateCode: string;
+		mediaStateId: number;
 	};
 	availableForStreaming: boolean;
+	postGameShow: boolean;
+	preGameShow: boolean;
 }
 
 export interface GameContent {
@@ -342,7 +356,7 @@ export interface Decisions {
 
 export interface Ticket {
 	ticketType: string;
-	ticketLinks: TicketLink[];
+	ticketLinks: TicketLink;
 }
 
 export interface TicketLink {
@@ -388,4 +402,21 @@ export interface Team {
 	id: number;
 	name: string;
 	link: string;
+}
+
+export interface Flags {
+	noHitter: boolean;
+	perfectGame: boolean;
+}
+
+export interface StatusFlags {
+	isFinal: boolean;
+	isLive: boolean;
+	isDelayed: boolean;
+	isCancelled: boolean;
+	isPostponed: boolean;
+	isScheduled: boolean;
+	isWarmup: boolean;
+	isManagerChallenge: boolean;
+	isUmpireReview: boolean;
 }

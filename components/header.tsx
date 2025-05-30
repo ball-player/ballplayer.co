@@ -1,42 +1,37 @@
-'use client';
-
 import Link from 'next/link';
-import { Search, Menu, X } from 'lucide-react';
-import { CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
-import { Button } from '@/components/ui/button';
+import { Search } from 'lucide-react';
+
 import { ModeToggle } from '@/components/mode-toggle';
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { GameCarousel } from './game-carousel';
+import { SiteNavigation } from '@/components/site-navigation';
+import { GameCarousel } from '@/components/game-carousel';
+import { UserDropdown } from '@/components/user-dropdown';
+import { SearchBar } from '@/components/search-bar';
 
-export function Header() {
-	const [isMenuOpen, setIsMenuOpen] = useState(false);
+import { getGames } from '@/lib/api';
+import { Button } from './ui/button';
 
-	const toggleMenu = () => {
-		setIsMenuOpen(!isMenuOpen);
-	};
+export async function Header() {
+	const { dates } = await getGames(new Date());
 
 	return (
 		<>
 			<header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm">
-				<div className="container w-full mx-auto flex h-16 items-center justify-between gap-6">
+				<div className="container px-4 w-full mx-auto flex h-16 items-center justify-between gap-6 relative">
 					<div className="flex items-center gap-2">
 						<Link href="/" className="flex items-center gap-2">
-							<motion.div
-								initial={{ rotate: 0 }}
-								animate={{ rotate: 360 }}
-								transition={{ duration: 1, ease: 'easeInOut', delay: 0.2 }}
-								className="rounded-full bg-primary p-1.5"
-							>
+							<div className="rounded-full bg-primary p-1.5">
 								<Search className="h-5 w-5 text-primary-foreground" />
-							</motion.div>
+							</div>
 						</Link>
 					</div>
 
+					<div className="absolute left-1/2 -translate-x-1/2 w-full max-w-md hidden md:block">
+						<SearchBar />
+					</div>
+
 					{/* Desktop Navigation */}
-					<nav className="hidden md:flex items-center gap-6">
-						<Link
+					<nav className="flex items-center gap-4">
+						{/* <Link
 							href="/schedule"
 							className="text-sm font-medium transition-colors hover:text-primary"
 						>
@@ -59,12 +54,16 @@ export function Header() {
 							className="text-sm font-medium transition-colors hover:text-primary"
 						>
 							Search
-						</Link>
+						</Link> */}
+						<Button variant="outline" size="icon" className="h-10 w-10 md:hidden">
+							<Search className="h-[1.2rem] w-[1.2rem]" />
+						</Button>
 						<ModeToggle />
+						<UserDropdown />
 					</nav>
 
 					{/* Mobile Menu Button */}
-					<div className="md:hidden">
+					{/* <div className="md:hidden">
 						<Button
 							variant="ghost"
 							size="icon"
@@ -73,11 +72,11 @@ export function Header() {
 						>
 							{isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
 						</Button>
-					</div>
+					</div> */}
 				</div>
 
 				{/* Mobile Navigation */}
-				<AnimatePresence>
+				{/* <AnimatePresence>
 					{isMenuOpen && (
 						<motion.div
 							initial={{ opacity: 0, height: 0 }}
@@ -121,14 +120,10 @@ export function Header() {
 							</div>
 						</motion.div>
 					)}
-				</AnimatePresence>
+				</AnimatePresence> */}
 			</header>
-			<div className="container py-4 mx-auto relative">
-				<GameCarousel>
-					<CarouselPrevious />
-					<CarouselNext />
-				</GameCarousel>
-			</div>
+			<GameCarousel dates={dates} />
+			<SiteNavigation />
 		</>
 	);
 }
