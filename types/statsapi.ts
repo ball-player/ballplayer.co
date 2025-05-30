@@ -38,7 +38,7 @@ export interface TeamGameInfo {
 	score: number;
 	team: TeamDetails;
 	isWinner: boolean;
-	probablePitcher: PlayerDetails;
+	probablePitcher: PlayerDetailsWithStats;
 	leagueRecord: TeamRecord;
 }
 
@@ -411,11 +411,12 @@ export interface Flags {
 
 export interface StatusFlags {
 	isFinal: boolean;
+	isGameOver: boolean;
 	isLive: boolean;
 	isDelayed: boolean;
 	isCancelled: boolean;
 	isPostponed: boolean;
-	isScheduled: boolean;
+	isPreview: boolean;
 	isWarmup: boolean;
 	isManagerChallenge: boolean;
 	isUmpireReview: boolean;

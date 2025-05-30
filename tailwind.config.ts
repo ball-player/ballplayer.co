@@ -11,6 +11,12 @@ const config: Config = {
 	],
 	theme: {
 		extend: {
+			fontSize: {
+				tiny: 'var(--text-tiny)',
+			},
+			fontFamily: {
+				heading: ['var(--font-heading)'],
+			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'gradient-conic':
@@ -84,13 +90,25 @@ const config: Config = {
 						height: '0',
 					},
 				},
+				'border-pulse': {
+					'0%, 100%': {
+						borderColor: 'hsl(var(--destructive))',
+						boxShadow: 'var(--shadow-md)',
+					},
+					'50%': {
+						borderColor: 'hsl(var(--border))',
+						boxShadow: 'var(--shadow-sm)',
+					},
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
+				'border-pulse': 'border-pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
 			},
 		},
 	},
 	plugins: [animate, scrollbar],
 };
+
 export default config;

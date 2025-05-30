@@ -1,26 +1,28 @@
 'use client';
 
-import { GameCard } from './game-card';
-import { ChevronRight } from 'lucide-react';
-import { getGames } from '@/lib/api';
-import { ChevronLeft } from 'lucide-react';
+import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useMediaQuery } from 'usehooks-ts';
 import { format } from 'date-fns';
 import { type GameDate } from '@/types/statsapi';
-import { useRef, useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+
+import { GameCard } from '@/components/game-card';
+import { getGames } from '@/lib/api';
 
 export function GameCarousel({ dates: initialDates }: { dates: GameDate[] }) {
 	const [refetchInterval, setRefetchInterval] = useState<number | false>(false);
 	const listRef = useRef<HTMLUListElement>(null);
-	const initialRender = useRef(false);
 	const [canScrollLeft, setCanScrollLeft] = useState(false);
 	const [canScrollRight, setCanScrollRight] = useState(false);
 
-	const { data, isLoading } = useQuery({
+	const { data } = useQuery({
 		queryKey: ['games'],
 		queryFn: () => getGames(new Date()),
 		refetchInterval,
 	});
+
+	const isMobile = useMediaQuery('(max-width: 590px)');
 
 	const { totalGamesInProgress, dates = initialDates } = data ?? {};
 	const items = dates.flatMap(({ date, games }) => [
@@ -34,43 +36,25 @@ export function GameCarousel({ dates: initialDates }: { dates: GameDate[] }) {
 		})),
 	]);
 
-	const today = new Date();
-	const todayStr = today.toISOString().slice(0, 10);
-	const startIndex = items.findIndex(
-		(item) => !!item.game && item.date.startsWith(todayStr)
+	const PAGE_SIZE = useMemo(() => (isMobile ? 1 : 2), [isMobile]);
+
+	const scrollByPage = useCallback(
+		(direction: 'left' | 'right') => {
+			if (!listRef.current) return;
+
+			const ITEM_WIDTH = 204 + 16; // 204px + 16px gap (gap-4 = 1rem = 16px)
+			const { scrollLeft } = listRef.current;
+			const scrollAmount = ITEM_WIDTH * PAGE_SIZE;
+
+			const newScrollLeft =
+				direction === 'left'
+					? Math.max(0, scrollLeft - scrollAmount)
+					: scrollLeft + scrollAmount;
+
+			listRef.current.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
+		},
+		[PAGE_SIZE]
 	);
-	const ITEM_WIDTH = 204 + 16; // 204px + 16px gap (gap-4 = 1rem = 16px)
-	const PAGE_SIZE = 2;
-
-	const scrollByPage = (direction: 'left' | 'right') => {
-		if (!listRef.current) return;
-		const { scrollLeft } = listRef.current;
-		const scrollAmount = ITEM_WIDTH * PAGE_SIZE;
-
-		const newScrollLeft =
-			direction === 'left'
-				? Math.max(0, scrollLeft - scrollAmount)
-				: scrollLeft + scrollAmount;
-
-		listRef.current.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
-	};
-
-	// useEffect(() => {
-	// 	if (listRef.current && startIndex !== -1 && !initialRender.current) {
-	// 		initialRender.current = true;
-	// 		const ul = listRef.current;
-	// 		const li = ul.children[startIndex] as HTMLElement;
-	// 		const firstLi = ul.children[0] as HTMLElement;
-	// 		if (li && firstLi) {
-	// 			const scrollPaddingLeft = 100; // px, from scroll-pl-[100px]
-	// 			const relativeOffset = li.offsetLeft - firstLi.offsetLeft;
-	// 			ul.scrollTo({
-	// 				left: relativeOffset - scrollPaddingLeft,
-	// 				behavior: 'auto',
-	// 			});
-	// 		}
-	// 	}
-	// }, [startIndex, items.length]);
 
 	useEffect(() => {
 		setRefetchInterval(totalGamesInProgress ? 1000 * 10 : false);
@@ -97,7 +81,7 @@ export function GameCarousel({ dates: initialDates }: { dates: GameDate[] }) {
 	return (
 		<div
 			className="relative py-4 before:content-[''] before:absolute before:top-0 before:left-0 before:w-[84px] before:h-full
-					before:pointer-events-none before:z-20
+					before:pointer-events-none before:z-30
 					before:border-r"
 		>
 			<ul
@@ -116,7 +100,7 @@ export function GameCarousel({ dates: initialDates }: { dates: GameDate[] }) {
 						return (
 							<li
 								key={index}
-								className="flex-shrink-0 snap-start flex items-center justify-center basis-[84px] sticky top-0 left-0 bg-background z-10"
+								className="flex-shrink-0 snap-start flex items-center justify-center basis-[84px] sticky top-0 left-0 bg-background z-20"
 							>
 								<DateCard date={date} />
 							</li>
@@ -126,7 +110,7 @@ export function GameCarousel({ dates: initialDates }: { dates: GameDate[] }) {
 				})}
 				<li className="flex-shrink-0 basis-[116px]" />
 			</ul>
-			<div className="absolute top-0 z-20 right-0 w-content px-4 bg-background border-l h-full flex items-center justify-between gap-2">
+			<div className="absolute top-0 z-20 right-0 w-content px-4 bg-background border-l h-full flex items-center gap-2 flex-col justify-center md:flex-row md:justify-between">
 				<button
 					type="button"
 					onClick={() => scrollByPage('left')}

@@ -19,9 +19,7 @@ export async function Header() {
 				<div className="container px-4 w-full mx-auto flex h-16 items-center justify-between gap-6 relative">
 					<div className="flex items-center gap-2">
 						<Link href="/" className="flex items-center gap-2">
-							<div className="rounded-full bg-primary p-1.5">
-								<Search className="h-5 w-5 text-primary-foreground" />
-							</div>
+							<span className="text-2xl font-heading">Ballplayer Co.</span>
 						</Link>
 					</div>
 

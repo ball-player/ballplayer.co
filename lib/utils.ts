@@ -6,6 +6,13 @@ import {
 	MediaPlaybackFieldsFragment,
 	PlayerInfoFieldsFragment,
 } from '@/gql/generated';
+import {
+	Game,
+	PitchingStats,
+	HittingStats,
+	PlayerDetails,
+	PlayerDetailsWithStats,
+} from '@/types/statsapi';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -90,6 +97,55 @@ export function getPlayerAvatar(player: PlayerInfoFieldsFragment): string {
 	return avatar?.url ?? '';
 }
 
+export function getPlayerAvatarUrl(
+	player: PlayerDetails,
+	options: { size: number } = { size: 60 }
+): string {
+	return player?.id
+		? `https://content.mlb.com/images/headshots/current/${options.size}x${options.size}/${player.id}.png`
+		: '';
+}
+
+export function getPitcherSingleSeasonStats(
+	player: PlayerDetailsWithStats
+): PitchingStats | undefined {
+	const { stats } = player ?? {};
+	const { stats: pitchingStats } =
+		stats?.find(
+			(stat) =>
+				stat.group.displayName === 'pitching' &&
+				stat.type.displayName === 'statsSingleSeason'
+		) ?? {};
+
+	return pitchingStats as PitchingStats | undefined;
+}
+
+export function getPitcherGameStats(
+	player: PlayerDetailsWithStats
+): PitchingStats | undefined {
+	const { stats } = player ?? {};
+	const { stats: pitchingStats } =
+		stats?.find(
+			(stat) =>
+				stat.group.displayName === 'pitching' && stat.type.displayName === 'gameLog'
+		) ?? {};
+
+	return pitchingStats as PitchingStats | undefined;
+}
+
+export function getBatterGameStats(
+	player: PlayerDetailsWithStats
+): HittingStats | undefined {
+	const { stats } = player ?? {};
+	const { stats: battingStats } =
+		stats?.find(
+			(stat) =>
+				stat.group.displayName === 'hitting' && stat.type.displayName === 'gameLog'
+		) ?? {};
+
+	return battingStats as HittingStats | undefined;
+}
+
 const ALLOWED_DOMAINS = ['milb-cuts-diamond'];
 
 export function hasPlayback(video: MediaPlaybackFieldsFragment): boolean {
@@ -113,3 +169,53 @@ export function formatTime(dateString: string): string {
 		return dateString;
 	}
 }
+
+export const toInningHalfDisplay = (inningState: string) => {
+	switch (inningState) {
+		case 'Top':
+			return 'Top';
+		case 'Bottom':
+			return 'Bot';
+		case 'Middle':
+			return 'Mid';
+		default:
+			return inningState;
+	}
+};
+
+export const isFreeGameOfTheDay = (game: Game) => {
+	const { broadcasts } = game;
+	const [broadcast] = broadcasts ?? [];
+	const { freeGame } = broadcast ?? {};
+
+	return freeGame;
+};
+
+export const isUserFollowingPlayer = (player: PlayerInfoFieldsFragment) => {
+	// TODO: Implement this
+	return false;
+};
+
+export const getGameState = (game: Game) => {
+	const {
+		status: { detailedState, abstractGameState },
+		linescore,
+		statusFlags,
+	} = game;
+	const { teams, currentInning, isTopInning, outs } = linescore ?? {};
+	const { runs: awayTeamRuns = 0 } = teams?.away ?? {};
+	const { runs: homeTeamRuns = 0 } = teams?.home ?? {};
+
+	const isLive = statusFlags.isLive || abstractGameState === 'Live';
+	const isPreview = statusFlags.isPreview || abstractGameState === 'Preview';
+	const isPostponed = statusFlags.isPostponed || detailedState === 'Postponed';
+	const isFinal =
+		statusFlags.isFinal ||
+		(abstractGameState === 'Final' && !isPostponed) ||
+		(currentInning === 9 &&
+			isTopInning &&
+			outs === 3 &&
+			homeTeamRuns > awayTeamRuns);
+
+	return { isFinal, isLive, isPreview, isPostponed };
+};

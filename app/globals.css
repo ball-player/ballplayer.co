@@ -85,4 +85,8 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+
+	:root {
+		--text-tiny: 0.625rem;
+	}
 }

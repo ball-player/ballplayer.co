@@ -1,24 +1,30 @@
 import './globals.css';
 import type { Metadata } from 'next';
+import LocalFont from 'next/font/local';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import { SearchProvider } from '@/components/search-provider';
 import { Header } from '@/components/header';
 import { Toaster } from '@/components/ui/toaster';
 import { ReactQueryProvider } from '@/components/react-query-provider';
-import { GameCarousel } from '@/components/game-carousel';
+import { cn } from '@/lib/utils';
+
+const dancingScript = LocalFont({
+	src: '../public/fonts/DancingScript-Variable.woff2',
+	variable: '--font-heading',
+});
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-	title: 'MLB Video Search',
-	description: 'Search and discover MLB highlights and videos',
+	title: 'Ballplayer',
+	description: '',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<body className={inter.className}>
+			<body className={cn(inter.className, dancingScript.variable)}>
 				<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
 					<ReactQueryProvider>
 						<SearchProvider>

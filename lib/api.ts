@@ -78,7 +78,7 @@ export const getGames = async (date: Date): Promise<GameApiResponse> => {
 		endDate,
 		sportId: '1',
 		hydrate:
-			'team,linescore,xrefId,flags,review,broadcasts(all),game(content(media(epg),summary),tickets),seriesStatus(useOverride=true),statusFlags,story',
+			'team,linescore,probablePitcher,stats,flags,review,broadcasts(all),game(content(media(epg),summary),tickets),seriesStatus(useOverride=true),statusFlags,story',
 		language: 'en',
 		sortBy: 'gameDate,gameStatus',
 	};
