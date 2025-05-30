@@ -4,7 +4,7 @@ import { Outs } from '@/components/icons/outs';
 import { cn, formatTime } from '@/lib/utils';
 import { type Game } from '@/types/statsapi';
 import { Triangle } from './icons/triangle';
-import { Ticket, Tickets, Tv } from 'lucide-react';
+import { Tickets, Tv } from 'lucide-react';
 
 function GameState({ game }: { game: Game }) {
 	const {
@@ -62,15 +62,17 @@ export function GameCard({ game }: { game: Game }) {
 		tickets: [ticket] = [],
 		flags: { noHitter, perfectGame },
 	} = game;
-	const { outs, teams, offense: { first, second, third } = {} } = linescore ?? {};
+	const { outs, teams, offense } = linescore ?? {};
+	const { first, second, third } = offense ?? {};
 	const runners = {
 		first: !!first,
 		second: !!second,
 		third: !!third,
 	};
 
-	const { away: { runs: awayTeamRuns } = {}, home: { runs: homeTeamRuns } = {} } =
-		teams ?? {};
+	const { away, home } = teams ?? {};
+	const { runs: awayTeamRuns } = away ?? {};
+	const { runs: homeTeamRuns } = home ?? {};
 
 	const hasScores = awayTeamRuns !== undefined && homeTeamRuns !== undefined;
 	const isLive = abstractGameState === 'Live';
