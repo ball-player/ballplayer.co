@@ -45,7 +45,7 @@ export function StandingsTabs({ records }: { records: DivisionStandings[] }) {
 				onValueChange={(v) => setDivision(Number(v))}
 				className="space-y-4"
 			>
-				<div className="flex items-center justify-between gap-8">
+				<div className="flex flex-col-reverse sm:flex-row items-end justify-between gap-4 sm:gap-8 sm:items-center">
 					<TabsList className="rounded-full">
 						{leagueObj.divisions.map((divId) => (
 							<TabsTrigger

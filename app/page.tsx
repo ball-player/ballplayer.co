@@ -11,7 +11,7 @@ export default async function Home() {
 	const { records } = standings;
 
 	return (
-		<div className="mx-auto container px-4 py-16 sm:px-6 lg:px-8">
+		<div className="mx-auto container px-4 py-16">
 			<div className="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
 				<aside className="lg:row-end-1">
 					<Card className="border-2">
@@ -33,7 +33,7 @@ export default async function Home() {
 								<StandingsTabs records={records} />
 							</section>
 
-							<section className="space-y-6">
+							<section className="space-y-6 col-span-2 xl:col-span-1">
 								<h2 className="relative text-lg font-normal flex items-center">
 									<span>Trending Players</span>
 									<span className="flex-1 ml-4 h-px border block align-middle" />

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { TeamLogo } from './team-logo';
 import {
 	Table,
@@ -15,15 +16,15 @@ export function StandingsTable({ teams }: { teams: TeamRecord[] }) {
 			<TableHeader>
 				<TableRow className="border-none hover:bg-transparent">
 					<TableHead className="text-primary">Team</TableHead>
-					<TableHead className="text-right text-primary">W</TableHead>
-					<TableHead className="text-right text-primary">L</TableHead>
-					<TableHead className="text-right text-primary">GB</TableHead>
-					<TableHead className="text-right text-primary">PCT</TableHead>
+					<TableHead className="text-right text-primary px-2 sm:px-4">W</TableHead>
+					<TableHead className="text-right text-primary px-2 sm:px-4">L</TableHead>
+					<TableHead className="text-right text-primary px-2 sm:px-4">GB</TableHead>
+					<TableHead className="text-right text-primary px-2 sm:px-4">PCT</TableHead>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
 				{teams.map((team) => (
-					<TableRow key={team.team.name} className="border-none">
+					<TableRow key={team.team.name} className="border-none relative">
 						<TableCell className="rounded-l-xl">
 							<div className="flex items-center gap-2">
 								<TeamLogo
@@ -31,13 +32,21 @@ export function StandingsTable({ teams }: { teams: TeamRecord[] }) {
 									size={20}
 									className="w-6 h-6"
 								/>
-								<span>{team.team.name}</span>
+								<Link
+									href={`/teams/${team.team.id}`}
+									className="before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-transparent before:z-10"
+								>
+									<span className="hidden sm:block">{team.team.name}</span>
+									<span className="block sm:hidden">{team.team.abbreviation}</span>
+								</Link>
 							</div>
 						</TableCell>
-						<TableCell className="text-right">{team.wins}</TableCell>
-						<TableCell className="text-right">{team.losses}</TableCell>
-						<TableCell className="text-right">{team.gamesBack}</TableCell>
-						<TableCell className="text-right rounded-r-xl">
+						<TableCell className="text-right px-2 sm:px-4">{team.wins}</TableCell>
+						<TableCell className="text-right px-2 sm:px-4">{team.losses}</TableCell>
+						<TableCell className="text-right px-2 sm:px-4">
+							{team.gamesBack}
+						</TableCell>
+						<TableCell className="text-right px-2 sm:px-4 rounded-r-xl pr-none">
 							{team.winningPercentage}
 						</TableCell>
 					</TableRow>

@@ -10,6 +10,9 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
+	SelectSeparator,
+	SelectGroup,
+	SelectLabel,
 } from './ui/select';
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
@@ -17,6 +20,7 @@ import { useQuery } from '@tanstack/react-query';
 import { teams } from '@/data/teams';
 import { cn, getTeamColor } from '@/lib/utils';
 import { TrendingDown, TrendingUp } from 'lucide-react';
+import React from 'react';
 
 const chartConfig = {
 	desktop: {
@@ -47,6 +51,18 @@ const STATS = [
 		name: 'Runs Allowed',
 		key: 'runsAllowed',
 		cumulativeKey: 'cumulativeRunsAllowed',
+	},
+	{
+		id: 4,
+		name: 'Wins',
+		key: 'wins',
+		cumulativeKey: 'cumulativeWins',
+	},
+	{
+		id: 5,
+		name: 'Losses',
+		key: 'losses',
+		cumulativeKey: 'cumulativeLosses',
 	},
 ];
 const LEAGUE_AVERAGE_ID = 'league-average';
@@ -94,7 +110,7 @@ const getTeamStatsChartData = async (
 	teamId: string | number,
 	stat: (typeof STATS)[number]
 ): Promise<ChartDataRow[]> => {
-	let url = `/api/v1/team/stats?timeframe=${timeframe}&cumulative=true`;
+	let url = `/api/v1/teams/stats?timeframe=${timeframe}&cumulative=true`;
 	if (teamId !== LEAGUE_AVERAGE_ID) {
 		url += `&teamIds=${teamId}`;
 	}
@@ -196,10 +212,6 @@ const getStatLabel = (stat: string) => {
 	switch (stat) {
 		case 'Run Differential':
 			return 'Runs';
-		case 'Runs Scored':
-			return 'Runs scored';
-		case 'Runs Allowed':
-			return 'Runs allowed';
 		default:
 			return stat;
 	}
@@ -220,6 +232,14 @@ const getPercentageChangeLabel = (timeframe: string) => {
 			return `since last ${timeframe}`;
 	}
 };
+
+// Group teams by division
+const teamsByDivision = teams.reduce<Record<string, typeof teams>>((acc, team) => {
+	const division = team.division?.name || 'Other';
+	if (!acc[division]) acc[division] = [];
+	acc[division].push(team);
+	return acc;
+}, {});
 
 export function TeamStatsChart() {
 	const [timeframe, setTimeframe] = useState('week');
@@ -503,11 +523,19 @@ export function TeamStatsChart() {
 								<SelectValue placeholder="Select team" />
 							</SelectTrigger>
 							<SelectContent>
-								{teams.map((team) => (
-									<SelectItem key={team.id} value={String(team.id)}>
-										{team.name}
-									</SelectItem>
-								))}
+								{Object.entries(teamsByDivision).map(
+									([division, teamsInDivision], idx, arr) => (
+										<SelectGroup key={division}>
+											<SelectLabel>{division}</SelectLabel>
+											{teamsInDivision.map((team) => (
+												<SelectItem key={team.id} value={String(team.id)}>
+													{team.name}
+												</SelectItem>
+											))}
+											{idx < arr.length - 1 && <SelectSeparator />}
+										</SelectGroup>
+									)
+								)}
 							</SelectContent>
 						</Select>
 
@@ -521,11 +549,20 @@ export function TeamStatsChart() {
 								<SelectItem key={LEAGUE_AVERAGE_ID} value={LEAGUE_AVERAGE_ID}>
 									League Average
 								</SelectItem>
-								{teams.map((team) => (
-									<SelectItem key={team.id} value={String(team.id)}>
-										{team.name}
-									</SelectItem>
-								))}
+								<SelectSeparator />
+								{Object.entries(teamsByDivision).map(
+									([division, teamsInDivision], idx, arr) => (
+										<SelectGroup key={division}>
+											<SelectLabel>{division}</SelectLabel>
+											{teamsInDivision.map((team) => (
+												<SelectItem key={team.id} value={String(team.id)}>
+													{team.name}
+												</SelectItem>
+											))}
+											{idx < arr.length - 1 && <SelectSeparator />}
+										</SelectGroup>
+									)
+								)}
 							</SelectContent>
 						</Select>
 					</div>

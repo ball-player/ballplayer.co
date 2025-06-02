@@ -38,7 +38,7 @@ export function SiteNavigation({ className }: { className?: string }) {
 
 	return (
 		<nav className={cn('bg-red-500 py-4 ', className)} aria-label="Main navigation">
-			<ul className="container mx-auto flex items-center gap-4">
+			<ul className="container mx-auto px-4 flex items-center gap-4">
 				{links.map((link) => (
 					<li key={link.href}>
 						<NavLink {...link} activePath={activePath} />
