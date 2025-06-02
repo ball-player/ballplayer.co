@@ -13,6 +13,7 @@ const config: Config = {
 		extend: {
 			fontSize: {
 				tiny: 'var(--text-tiny)',
+				xxl: 'var(--text-xxl)',
 			},
 			fontFamily: {
 				heading: ['var(--font-heading)'],

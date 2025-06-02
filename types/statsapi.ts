@@ -59,7 +59,7 @@ export interface TeamDetails extends Team {
 	locationName: string;
 	league: LeagueDetails;
 	division: DivisionDetails;
-	teamLeaders: TeamLeader[];
+	teamLeaders?: TeamLeader[];
 }
 
 export interface LeagueDetails {
@@ -420,4 +420,90 @@ export interface StatusFlags {
 	isWarmup: boolean;
 	isManagerChallenge: boolean;
 	isUmpireReview: boolean;
+}
+
+export interface Division {
+	id: number;
+	name: string;
+	link: string;
+}
+
+export interface DivisionStandings {
+	league: {
+		id: number;
+	};
+	division: {
+		id: number;
+	};
+	teamRecords: TeamRecord[];
+}
+
+export interface StandingsApiResponse {
+	records: DivisionStandings[];
+}
+
+export interface Record {
+	wins: number;
+	losses: number;
+	pct: string;
+}
+
+export interface SplitRecord extends Record {
+	type: string;
+}
+
+export interface DivisionRecord extends Record {
+	division: Division;
+}
+
+export interface TeamRecord {
+	team: TeamDetails;
+	season: string;
+	streak: {
+		streakType: string;
+		streakNumber: number;
+		streakCode: string;
+	};
+	divisionRank: string;
+	leagueRank: string;
+	sportRank: string;
+	gamesPlayed: number;
+	gamesBack: string;
+	wildCardGamesBack: string;
+	leagueGamesBack: string;
+	springLeagueGamesBack: string;
+	sportGamesBack: string;
+	divisionGamesBack: string;
+	conferenceGamesBack: string;
+	leagueRecord: {
+		wins: number;
+		losses: number;
+		ties: number;
+		pct: string;
+	};
+	lastUpdated: string;
+	records: {
+		splitRecords: SplitRecord[];
+		divisionRecords: DivisionRecord[];
+		overallRecords: SplitRecord[];
+		leagueRecords: DivisionRecord[];
+		expectedRecords: SplitRecord[];
+	};
+	runsAllowed: number;
+	runsScored: number;
+	divisionChamp: boolean;
+	divisionLeader: boolean;
+	hasWildcard: boolean;
+	clinched: boolean;
+	eliminationNumber: string;
+	eliminationNumberSport: string;
+	eliminationNumberLeague: string;
+	eliminationNumberDivision: string;
+	eliminationNumberConference: string;
+	wildCardEliminationNumber: string;
+	magicNumber: string;
+	wins: number;
+	losses: number;
+	runDifferential: number;
+	winningPercentage: string;
 }

@@ -200,7 +200,7 @@ export function GameCard({ game }: { game: Game }) {
 										{isFinal && homeTeamRuns > awayTeamRuns && (
 											<Triangle
 												size={12}
-												className="w-4 h-4 absolute right-[-18px] rotate-180"
+												className="w-4 h-4 absolute right-[-18px] rotate-180 z-20"
 											/>
 										)}
 									</div>
@@ -269,21 +269,15 @@ function GameState({ game }: { game: Game }) {
 function HoveredGameState({ game }: { game: Game }) {
 	const {
 		teams: {
-			away: {
-				team: { abbreviation: awayTeam },
-				probablePitcher: awayPitcher,
-			},
-			home: {
-				team: { abbreviation: homeTeam },
-				probablePitcher: homePitcher,
-			},
+			away: { team: awayTeam, probablePitcher: awayPitcher },
+			home: { team: homeTeam, probablePitcher: homePitcher },
 		},
 		linescore,
 		flags: { noHitter, perfectGame },
 		statusFlags,
 	} = game;
 	const { isFinal, isLive, isPreview } = statusFlags ?? {};
-	const { offense, defense, isTopInning, teams } = linescore ?? {};
+	const { offense, defense, teams } = linescore ?? {};
 	const { batter } = offense ?? {};
 	const { pitcher } = defense ?? {};
 
@@ -333,16 +327,20 @@ function HoveredGameState({ game }: { game: Game }) {
 						{/* Away Team */}
 						<div className="flex items-center gap-4">
 							<div className="flex items-center gap-3 flex-1">
-								<TeamLogo code={awayTeam} className="w-6 h-6" />
-								<p className={cn('text-sm', awayTeamWinnerFontClass)}>{awayTeam}</p>
+								<TeamLogo code={awayTeam.abbreviation} className="w-6 h-6" />
+								<p className={cn('text-sm', awayTeamWinnerFontClass)}>
+									{awayTeam.abbreviation}
+								</p>
 							</div>
 						</div>
 
 						{/* Home Team */}
 						<div className="flex items-center gap-4">
 							<div className="flex items-center gap-3 flex-1">
-								<TeamLogo code={homeTeam} className="w-6 h-6" />
-								<p className={cn('text-sm', homeTeamWinnerFontClass)}>{homeTeam}</p>
+								<TeamLogo code={homeTeam.abbreviation} className="w-6 h-6" />
+								<p className={cn('text-sm', homeTeamWinnerFontClass)}>
+									{homeTeam.abbreviation}
+								</p>
 							</div>
 						</div>
 					</div>
@@ -374,7 +372,7 @@ function HoveredGameState({ game }: { game: Game }) {
 				<div
 					className={cn(
 						'flex gap-2 w-full',
-						!isTopInning ? 'flex-col' : 'flex-col-reverse'
+						offense.team.id === awayTeam.id ? 'flex-col-reverse' : 'flex-col'
 					)}
 				>
 					<div className="flex items-center gap-3 flex-1">

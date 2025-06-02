@@ -1,4 +1,4 @@
-import { add, sub, format } from 'date-fns';
+import { add, format } from 'date-fns';
 import {
 	ClipQueryDocument,
 	ContentPreference,
@@ -10,7 +10,8 @@ import {
 	NewSearchQueryQueryVariables,
 	QueryType,
 } from '@/gql/generated';
-import { GameApiResponse } from '@/types/statsapi';
+import { GameApiResponse, StandingsApiResponse } from '@/types/statsapi';
+import { TrendingPlayer } from '@/types/baseball-savant';
 
 export const getVideo = async (slug: string) => {
 	const variables = {
@@ -89,6 +90,78 @@ export const getGames = async (date: Date): Promise<GameApiResponse> => {
 		{
 			method: 'GET',
 			cache: 'no-store',
+		}
+	);
+
+	return data.json();
+};
+
+export const getStats = async ({
+	startDate,
+	endDate,
+	teamIds,
+}: {
+	startDate: Date;
+	endDate: Date;
+	teamIds: string[];
+}) => {
+	const variables = {
+		sportId: '1',
+		startDate: format(startDate, 'yyyy-MM-dd'),
+		endDate: format(endDate, 'yyyy-MM-dd'),
+		gameTypes: 'R',
+		hydrate: 'team,linescore',
+		scheduleTypes: 'games',
+		language: 'en',
+		teamIds: teamIds.join(','),
+	};
+
+	const params = new URLSearchParams(variables);
+
+	const data = await fetch(
+		`${process.env.NEXT_PUBLIC_STATSAPI_URL}/schedule?${params.toString()}`,
+		{
+			method: 'GET',
+			cache: 'force-cache',
+			next: {
+				revalidate: 60 * 60, // 1 hour
+			},
+		}
+	);
+
+	return data.json();
+};
+
+export const getStandings = async (date: Date): Promise<StandingsApiResponse> => {
+	const dateString = format(date, 'yyyy-MM-dd');
+
+	const variables = {
+		date: dateString,
+		season: '2025',
+		leagueId: '103,104',
+		seasonType: 'playoffs',
+		standingsType: 'regularSeason,springTraining,firstHalf,secondHalf',
+		hydrate: 'division,conference,sport,league,team',
+	};
+
+	const params = new URLSearchParams(variables);
+
+	const data = await fetch(
+		`${process.env.NEXT_PUBLIC_STATSAPI_URL}/standings?${params.toString()}`,
+		{
+			method: 'GET',
+			cache: 'no-cache',
+		}
+	);
+
+	return data.json();
+};
+
+export const getTrendingPlayers = async (): Promise<TrendingPlayer[]> => {
+	const data = await fetch(
+		`https://baseballsavant.mlb.com/savant/api/v1/trending-players`,
+		{
+			method: 'GET',
 		}
 	);
 

@@ -121,7 +121,7 @@ export async function Header() {
 				</AnimatePresence> */}
 			</header>
 			<GameCarousel dates={dates} />
-			<SiteNavigation />
+			<SiteNavigation className="sticky top-[65px] z-50" />
 		</>
 	);
 }

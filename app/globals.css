@@ -88,5 +88,6 @@
 
 	:root {
 		--text-tiny: 0.625rem;
+		--text-xxl: 2rem;
 	}
 }

@@ -12,6 +12,7 @@ import {
 	HittingStats,
 	PlayerDetails,
 	PlayerDetailsWithStats,
+	DivisionStandings,
 } from '@/types/statsapi';
 
 export function cn(...inputs: ClassValue[]) {
@@ -98,7 +99,7 @@ export function getPlayerAvatar(player: PlayerInfoFieldsFragment): string {
 }
 
 export function getPlayerAvatarUrl(
-	player: PlayerDetails,
+	player: { id: number },
 	options: { size: number } = { size: 60 }
 ): string {
 	return player?.id
@@ -218,4 +219,41 @@ export const getGameState = (game: Game) => {
 			homeTeamRuns > awayTeamRuns);
 
 	return { isFinal, isLive, isPreview, isPostponed };
+};
+
+export const getLeagueName = (
+	id: number,
+	{ shorten = false }: { shorten?: boolean } = {}
+) => {
+	switch (id) {
+		case 103:
+			return shorten ? 'AL' : 'American League';
+		case 104:
+			return shorten ? 'NL' : 'National League';
+	}
+};
+
+export const getDivisionName = (
+	id: number,
+	{ shorten = false }: { shorten?: boolean } = {}
+) => {
+	switch (id) {
+		case 201:
+			return shorten ? 'AL East' : 'American League East';
+		case 202:
+			return shorten ? 'AL Central' : 'American League Central';
+		case 200:
+			return shorten ? 'AL West' : 'American League West';
+		case 204:
+			return shorten ? 'NL East' : 'National League East';
+		case 205:
+			return shorten ? 'NL Central' : 'National League Central';
+		case 203:
+			return shorten ? 'NL West' : 'National League West';
+	}
+};
+
+export const getDivisionShortName = (id: number) => {
+	const [, division] = getDivisionName(id, { shorten: true })?.split(' ') ?? [];
+	return division;
 };
